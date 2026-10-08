@@ -26,7 +26,7 @@ make test       # pytest (Lambda code)
 ```
 
 ## Module rules
-- `versions.tf`: Terraform `>= 1.5.0`, AWS provider `>= 5.40`. Modules never configure a `provider` block; examples do.
+- `versions.tf`: Terraform `>= 1.5.0`, AWS provider `>= 5.80` (the lowest version that supports budget tags and the python3.13 Lambda runtime). Modules never configure a `provider` block; examples do.
 - Every variable has a `description` and a `type`, plus a `validation` block when bad input is possible.
 - Every module takes `name_prefix` (default `"finops"`) and `tags` (default `{}`) where it creates taggable resources.
 - **Safe defaults:** nothing deletes data, stops production, or blocks resource creation unless the user opts in (examples: `s3-lifecycle.expiration_days = null`, `tag-enforcement.create_tag_policy = false`).
