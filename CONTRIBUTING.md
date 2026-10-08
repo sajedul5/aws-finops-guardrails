@@ -19,7 +19,7 @@ pre-commit install
 ```bash
 terraform fmt -recursive
 make validate      # init -backend=false + validate for every module and example
-make test          # pytest for the off-hours scheduler Lambda
+make test          # terraform test (mocked, needs Terraform >= 1.7) + pytest
 ```
 
 ## Commit messages
