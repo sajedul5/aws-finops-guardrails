@@ -4,7 +4,7 @@ Open-source Terraform modules that stop AWS bill surprises. This is a portfolio 
 
 ## How we work
 - **One step at a time.** The plan's steps are listed in `docs/ROADMAP.md`. Finish one step, show what changed and its benefit, then wait for the user's go-ahead.
-- Commit only when asked: one commit per step, on a feature branch, using Conventional Commits.
+- **Every finished step ends with the ship commands.** Claude doesn't commit or push itself. It runs `/step-done`, which prints the exact `git add` (only that step's files), `git commit`, `git push`, `gh pr create` and post-merge sync commands for the user to run. One commit per step, on a feature branch, using Conventional Commits.
 - **Never push to `main`.** A GitHub ruleset (`protect-main`) blocks direct pushes, force-pushes and deletion for everyone, admins included, and a hook blocks it locally too. The flow is always:
   `git switch main && git pull` → `git switch -c <type>/<short-name>` → commit → `git push -u origin <branch>` → `gh pr create`.
   Only the repo owner (@sajedul5) merges. Claude never runs `gh pr merge`.
