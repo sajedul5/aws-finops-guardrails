@@ -17,7 +17,9 @@ fi
 
 if printf '%s' "$cmd" | grep -Eq '(^|[;&|[:space:]])git([[:space:]]+-[^[:space:]]+)*[[:space:]]+push\b'; then
   branch=$(git -C "${CLAUDE_PROJECT_DIR:-.}" rev-parse --abbrev-ref HEAD 2>/dev/null)
-  if printf '%s' "$cmd" | grep -Eq '(^|[[:space:]:/+])(main|master)([[:space:]]|$)' || [ "$branch" = "main" ]; then
+  # Only inspect the push itself, not other commands chained after it (e.g. gh pr create --base main).
+  push_args=$(printf '%s\n' "$cmd" | grep -Eo 'git([[:space:]]+-[^[:space:]]+)*[[:space:]]+push[^;&|]*')
+  if printf '%s' "$push_args" | grep -Eq '([[:space:]:/+])(main|master)([[:space:]]|$)' || [ "$branch" = "main" ]; then
     echo "Blocked: never push to main. Push a feature branch and open a pull request; only the repo owner merges." >&2
     exit 2
   fi
