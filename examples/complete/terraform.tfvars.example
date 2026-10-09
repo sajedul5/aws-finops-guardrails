@@ -1,0 +1,24 @@
+# Copy to terraform.tfvars and edit. terraform.tfvars is git-ignored.
+owner              = "platform-team"
+cost_center        = "CC-1001"
+monthly_budget_usd = 25000
+alert_emails       = ["finops@example.com", "cto@example.com"]
+timezone           = "Asia/Dhaka"
+
+service_budgets_usd = {
+  "Amazon Elastic Compute Cloud - Compute" = 10000
+  "Amazon Relational Database Service"     = 5000
+}
+
+# Tagging (tag policy only from the management account)
+enable_config_rule = true
+# tag_policy_target_ids = ["r-abcd"]
+
+# S3
+# log_bucket_ids  = ["acme-alb-logs", "acme-cloudtrail"]
+# data_bucket_ids = ["acme-data-lake"]
+
+# CI/CD
+# github_repository    = "acme/infrastructure"
+# state_bucket_name    = "acme-terraform-state"
+# deployer_policy_arns = ["arn:aws:iam::111122223333:policy/finops-deployer"]

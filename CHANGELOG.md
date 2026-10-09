@@ -13,6 +13,7 @@ All notable changes to this project are documented here. The format follows
 - `s3-lifecycle` module: Standard-IA / Glacier IR tiering or Intelligent-Tiering, noncurrent-version expiry and incomplete-upload cleanup. Never deletes current objects by default.
 - `offhours-scheduler` module: EventBridge Scheduler + Lambda that stops/starts EC2, RDS and Aurora tagged `Schedule=office-hours`. Tag-scoped IAM, dry-run mode, timezone support, pause switch. Skips Auto Scaling, Spot and read replicas.
 - `github-oidc` module: keyless GitHub Actions access. A read-only plan role for PRs and main, and an apply role locked to one GitHub environment with no permissions by default. One repo only, audience pinned, optional Terraform state bucket access. 6 `terraform test` cases against the real trust-policy JSON.
+- Examples: `single-account` (budgets, anomaly email, scheduler in dry-run, optional S3 tiering) and `complete` (all guardrails, 4-week rollout order, S3 backend with native locking). Each has a `terraform.tfvars.example` and a mock-provider plan test.
 - pytest suite for the scheduler Lambda (12 tests, moto) and 6 `terraform test` cases.
 - `/step-done` skill: every finished step ends with commit, push and PR commands.
 - `terraform test` suites for all four modules, using a mock AWS provider (no credentials needed).
