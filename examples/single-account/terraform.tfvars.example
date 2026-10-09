@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars and edit. terraform.tfvars is git-ignored.
+owner              = "platform-team"
+monthly_budget_usd = 2000
+alert_emails       = ["finops@example.com"]
+timezone           = "Asia/Dhaka"
+
+# Optional
+# anomaly_threshold_usd = 50
+# scheduler_dry_run     = false   # after a week of checking the logs
+# lifecycle_bucket_ids  = ["my-app-logs"]

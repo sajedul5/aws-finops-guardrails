@@ -1,7 +1,7 @@
 # Run `make help` to list targets.
 DIRS := $(sort $(dir $(wildcard modules/*/versions.tf examples/*/main.tf)))
 PYTHON ?= python3
-TF_TEST_DIRS := $(sort $(patsubst %/tests/,%/,$(dir $(wildcard modules/*/tests/*.tftest.hcl))))
+TF_TEST_DIRS := $(sort $(patsubst %/tests/,%/,$(dir $(wildcard modules/*/tests/*.tftest.hcl examples/*/tests/*.tftest.hcl))))
 
 .PHONY: help fmt fmt-check validate test tftest pytest
 

@@ -31,6 +31,7 @@ Spikes are found in about **24 hours instead of at month-end**. A runaway resour
 
 ## Notes
 - AWS only supports SNS for `IMMEDIATE` alerts, and email only for `DAILY`/`WEEKLY`. The module picks the right one, and fails at plan time if `DAILY`/`WEEKLY` has no email.
+- **One per account:** AWS allows only one `DIMENSIONAL` (all-services) monitor per account. Use this module once per account, or use `CUSTOM` monitors for extra ones.
 - Cost Anomaly Detection itself is free.
 
 <!-- BEGIN_TF_DOCS -->
