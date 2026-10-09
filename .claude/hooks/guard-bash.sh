@@ -3,7 +3,16 @@
 # and pushes to main (main only changes through a reviewed pull request).
 set -uo pipefail
 
-cmd=$(jq -r '.tool_input.command // empty')
+raw=$(jq -r '.tool_input.command // empty')
+
+# Drop heredoc bodies (file content written with cat <<'EOF' ... EOF) so text that
+# merely mentions a command, such as docs or descriptions, is not treated as running it.
+cmd=$(printf '%s\n' "$raw" | awk '
+  in_doc { if ($0 ~ "^[[:space:]]*" term "[[:space:]]*$") in_doc = 0; next }
+  { print }
+  match($0, /<<-?[[:space:]]*["'"'"']?[A-Za-z_][A-Za-z0-9_]*["'"'"']?/) {
+    term = substr($0, RSTART, RLENGTH); gsub(/<<-?[[:space:]]*|["'"'"']/, "", term); in_doc = 1
+  }')
 
 if printf '%s' "$cmd" | grep -Eq 'terraform([[:space:]]+-[^[:space:]]+)*[[:space:]]+(apply|destroy)\b'; then
   echo "Blocked: 'terraform apply/destroy' is not allowed from Claude in this repo. Run it yourself after reviewing the plan." >&2
