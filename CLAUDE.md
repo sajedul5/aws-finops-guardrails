@@ -15,15 +15,25 @@ Open-source Terraform modules that stop AWS bill surprises. This is a portfolio 
 modules/<name>/      one guardrail per module: main.tf, variables.tf, outputs.tf, versions.tf, README.md
 examples/<name>/     runnable compositions of modules (single-account, complete)
 tests/               pytest + moto for Lambda code
-.claude/             hooks (scripts in .claude/hooks/) and skills (/new-module, /validate)
+scripts/             CI helpers (check-min-provider.sh)
+.github/workflows/   ci.yml: the five required checks on every PR
+.claude/             hooks (scripts in .claude/hooks/) and skills (/new-module, /validate, /step-done)
 ```
 
 ## Commands
 ```bash
-make fmt        # terraform fmt -recursive
-make validate   # fmt check + init -backend=false + validate for every module and example
-make test       # pytest (Lambda code)
+make fmt           # terraform fmt -recursive
+make validate      # fmt check + init -backend=false + validate for every module and example
+make test          # terraform test (mock provider) + pytest
+make lint          # tflint with the AWS ruleset
+make security      # checkov on Terraform and GitHub Actions
+make min-provider  # validate each module at its lowest supported AWS provider
+make ci            # all of the above, exactly what CI runs
 ```
+CI (`.github/workflows/ci.yml`) runs five jobs, and all are required before merging: `terraform`, `min-provider`, `tflint`, `checkov`, `pytest`. Actions are pinned to commit SHAs; Dependabot updates them.
+
+## Security scan exceptions
+A checkov finding is either fixed or skipped inline with a reason (`#checkov:skip=CKV_X:why`). Never skip without a reason that a client would accept. The current skips are on the scheduler Lambda (see `modules/offhours-scheduler/main.tf`).
 
 ## Module rules
 - `versions.tf`: Terraform `>= 1.5.0`, AWS provider `>= 5.80` (the lowest version that supports budget tags and the python3.13 Lambda runtime). Modules never configure a `provider` block; examples do.
@@ -39,4 +49,5 @@ There's no real client data. Any savings number in docs or the pitch page must b
 
 ## Tooling notes
 - Hooks need `jq` and `terraform` on PATH.
-- `tflint`, `checkov` and `terraform-docs` are optional locally; CI runs them.
+- `tflint` and `checkov` are optional locally; CI runs them. Override the binaries with `make lint TFLINT=/path/to/tflint` or `make security CHECKOV=/path/to/checkov`.
+- The Bash tool runs **zsh**: unquoted `$var` isn't word-split. Use arrays or pass arguments explicitly in loops.

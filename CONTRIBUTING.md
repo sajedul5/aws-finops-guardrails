@@ -18,8 +18,7 @@ pre-commit install
 ## Before opening a PR
 ```bash
 terraform fmt -recursive
-make validate      # init -backend=false + validate for every module and example
-make test          # terraform test (mocked, needs Terraform >= 1.7) + pytest
+make ci            # everything CI runs: validate, test, lint, security, min-provider
 ```
 
 ## Commit messages
