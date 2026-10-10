@@ -26,7 +26,7 @@ terraform plan                                  # review, then apply it yourself
 1. Connect the `alert_topics` outputs to Slack or Teams with AWS Chatbot, or subscribe an email address.
 2. Activate `Owner`, `Environment` and `CostCenter` as **cost allocation tags** in the Billing console.
 3. Tag dev/test resources with `Schedule=office-hours`, check a week of dry-run logs, then set `scheduler_dry_run = false`.
-4. If you use CI: copy the `github_roles` outputs into GitHub repository variables `AWS_PLAN_ROLE_ARN` and `AWS_APPLY_ROLE_ARN`, and add required reviewers to the `production` environment.
+4. If you use CI: copy [`deploy-workflow.yml`](deploy-workflow.yml) to `.github/workflows/deploy.yml`. Set the `github_roles` outputs as repository variables `AWS_PLAN_ROLE_ARN` and `AWS_APPLY_ROLE_ARN` (plus `AWS_REGION`), and add required reviewers to the `production` environment. PRs then get a plan comment, and merges apply the exact reviewed plan after approval.
 
 ## Cost to run
 Budgets, anomaly detection, tag policies and IAM are free. The Lambda, scheduler and SNS cost about $0. The AWS Config rule costs about $1–30/month depending on how many resources change. **Typically under $30/month**, against savings that are usually hundreds to thousands of dollars (typical estimate).

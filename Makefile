@@ -1,9 +1,11 @@
 # Run `make help` to list targets.
 DIRS := $(sort $(dir $(wildcard modules/*/versions.tf examples/*/main.tf)))
-PYTHON ?= python3
+PYTHON  ?= python3
+TFLINT  ?= tflint
+CHECKOV ?= checkov
 TF_TEST_DIRS := $(sort $(patsubst %/tests/,%/,$(dir $(wildcard modules/*/tests/*.tftest.hcl examples/*/tests/*.tftest.hcl))))
 
-.PHONY: help fmt fmt-check validate test tftest pytest
+.PHONY: help fmt fmt-check validate test tftest pytest lint security min-provider ci
 
 help:
 	@echo "fmt        Format all Terraform files"
@@ -12,6 +14,10 @@ help:
 	@echo "test       tftest + pytest"
 	@echo "tftest     terraform test (mock AWS provider, no credentials needed)"
 	@echo "pytest     pytest for Lambda code"
+	@echo "lint       tflint (AWS ruleset)"
+	@echo "security   checkov security scan"
+	@echo "min-provider  validate modules at their lowest supported AWS provider"
+	@echo "ci         everything CI runs"
 
 fmt:
 	terraform fmt -recursive
@@ -41,3 +47,15 @@ pytest:
 	else \
 		echo "No Python tests yet"; \
 	fi
+
+lint:
+	$(TFLINT) --init
+	$(TFLINT) --recursive --format compact
+
+security:
+	$(CHECKOV) -d . --framework terraform github_actions --quiet --compact
+
+min-provider:
+	./scripts/check-min-provider.sh
+
+ci: validate test lint security min-provider

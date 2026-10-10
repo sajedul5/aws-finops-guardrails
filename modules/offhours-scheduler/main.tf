@@ -18,6 +18,8 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {
+  #checkov:skip=CKV_AWS_158:Logs hold only resource IDs and states; the AWS-owned key is enough and a CMK adds $1/month per key.
+  #checkov:skip=CKV_AWS_338:Operational logs for a cost tool; retention is configurable (log_retention_days) and defaults to 30 days to keep storage cheap.
   name              = "/aws/lambda/${local.function_name}"
   retention_in_days = var.log_retention_days
   tags              = var.tags
@@ -120,6 +122,12 @@ resource "aws_iam_role_policy" "lambda" {
 }
 
 resource "aws_lambda_function" "this" {
+  #checkov:skip=CKV_AWS_50:Two invocations a day; every run already logs a full JSON report, so X-Ray tracing adds cost without insight.
+  #checkov:skip=CKV_AWS_115:Reserved concurrency fails in new accounts whose concurrency limit is 10; runs are idempotent, so overlap is harmless.
+  #checkov:skip=CKV_AWS_116:Invoked by EventBridge Scheduler, which retries; failed runs raise and show in the Lambda Errors metric.
+  #checkov:skip=CKV_AWS_117:Only calls public AWS APIs; a VPC would need a NAT gateway (~$32/month), which defeats a cost-saving tool.
+  #checkov:skip=CKV_AWS_173:Environment variables hold no secrets (tag key/value and on/off flags).
+  #checkov:skip=CKV_AWS_272:Single-file function built from this repo by Terraform; code signing would need a separate signing pipeline.
   function_name    = local.function_name
   description      = "Stops/starts resources tagged ${var.schedule_tag_key}=${var.schedule_tag_value}."
   role             = aws_iam_role.lambda.arn
@@ -183,6 +191,7 @@ resource "aws_iam_role_policy" "scheduler" {
 }
 
 resource "aws_scheduler_schedule" "this" {
+  #checkov:skip=CKV_AWS_297:The schedule payload is only {"action":"stop|start"}; nothing sensitive to encrypt with a CMK.
   for_each = local.schedules
 
   name                         = "${local.function_name}-${each.key}"
