@@ -1,3 +1,3 @@
-boto3>=1.34
+boto3>=1.43.109
 moto[ec2,rds]>=5.0
 pytest>=9.1.1
