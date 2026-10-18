@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-18
+
 ### Added
 - `make setup` and `make demo`: run the real scheduler Lambda against a fake AWS account (moto). No AWS account needed.
 - `docs/GETTING_STARTED.md`: three levels (laptop demo, deploy from laptop, deploy from GitHub Actions with OIDC) and common errors.
@@ -45,5 +47,6 @@ First public release: six guardrail modules, two examples, CI with five required
 - Guard hook no longer blocks commands that only *mention* deploy, merge or push commands inside heredoc text (for example docs and descriptions).
 - Minimum AWS provider raised from 5.40 to 5.80. Budget `tags` and the `python3.13` Lambda runtime don't exist before 5.80; checked by validating every module at exactly 5.80.0.
 
-[Unreleased]: https://github.com/sajedul5/aws-finops-guardrails/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/sajedul5/aws-finops-guardrails/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/sajedul5/aws-finops-guardrails/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/sajedul5/aws-finops-guardrails/releases/tag/v0.1.0

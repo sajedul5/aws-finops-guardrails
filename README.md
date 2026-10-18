@@ -84,7 +84,7 @@ Or use one module in your own code:
 
 ```hcl
 module "budgets" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/budgets?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/budgets?ref=v0.1.1"
 
   monthly_limit = 5000
   alert_emails  = ["finops@example.com"]
