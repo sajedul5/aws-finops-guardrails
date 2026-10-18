@@ -7,6 +7,7 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Client pitch page (`docs/index.html`, served by GitHub Pages): problem, six guardrails, interactive savings calculator with stated assumptions, 4-week rollout, comparison table and contact. No external scripts; light and dark themes.
 - README: CI and version badges, problem/solution table, Mermaid architecture diagram, module table with running costs, quick start, estimated savings with stated assumptions, "Built to be trusted" section and contact section.
 - `budgets` module: monthly and per-service AWS Budgets with actual-spend and forecast alerts, optional encrypted SNS topic.
 - `cost-anomaly` module: Cost Anomaly Detection monitor with an SNS (immediate) or email (daily/weekly) subscription.

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS FinOps Guardrails</title>
+<meta name="description" content="Stop AWS bill surprises in four weeks: budgets, anomaly alerts, tagging, off-hours shutdown and S3 tiering, delivered as tested open-source Terraform.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f7f8fa; --surface: #ffffff; --text: #16191f; --muted: #545b64;
+    --border: #e1e4e8; --accent: #e8730c; --accent-soft: #fff3e6; --good: #1d8102;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1216; --surface: #171b21; --text: #e9ecef; --muted: #a3acb6;
+      --border: #2a3038; --accent: #ff9a3c; --accent-soft: #2a1f14; --good: #5fd068;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1216; --surface: #171b21; --text: #e9ecef; --muted: #a3acb6;
+    --border: #2a3038; --accent: #ff9a3c; --accent-soft: #2a1f14; --good: #5fd068;
+    --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 56px 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.15; margin: 0 0 16px; letter-spacing: -.02em; }
+  h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: 0 0 8px; letter-spacing: -.01em; }
+  h3 { margin: 0 0 6px; font-size: 1.08rem; }
+  .lead { font-size: 1.15rem; color: var(--muted); max-width: 680px; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; }
+  .btn {
+    display: inline-block; padding: 12px 22px; border-radius: 8px; font-weight: 600;
+    text-decoration: none; border: 1px solid var(--accent);
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.ghost { color: var(--accent); }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  header.hero { padding: 72px 0 48px; border-bottom: 1px solid var(--border); }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .pill { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; font-size: .88rem; color: var(--muted); }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+  .card .tag { display: inline-block; font-size: .78rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 8px; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: .85rem; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .table-scroll { overflow-x: auto; }
+  .weeks { counter-reset: w; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .week { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; }
+  .week b { display: block; color: var(--accent); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+  .week p { margin: 4px 0 0; color: var(--muted); font-size: .95rem; }
+
+  /* calculator */
+  .calc { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 760px) { .calc { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 18px; }
+  .field label { display: flex; justify-content: space-between; gap: 12px; font-weight: 600; font-size: .95rem; }
+  .field label output { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .field small { display: block; color: var(--muted); font-size: .82rem; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); margin: 8px 0 2px; }
+  .result { display: flex; flex-direction: column; gap: 14px; }
+  .big { font-size: clamp(2.2rem, 6vw, 3rem); font-weight: 700; color: var(--good); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--border); font-variant-numeric: tabular-nums; }
+  .row span:first-child { color: var(--muted); }
+  .note { font-size: .82rem; color: var(--muted); }
+  .assume { margin: 0; padding-left: 18px; font-size: .85rem; color: var(--muted); }
+  .assume li { margin-bottom: 4px; }
+
+  .check { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .check li { padding-left: 28px; position: relative; color: var(--muted); }
+  .check li::before { content: "✓"; position: absolute; left: 0; color: var(--good); font-weight: 700; }
+  .check b { color: var(--text); }
+  .cta { text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 20px; }
+  footer { padding: 32px 0 48px; color: var(--muted); font-size: .88rem; text-align: center; }
+  .theme { position: absolute; top: 16px; right: 16px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; font: inherit; font-size: .85rem; }
+</style>
+</head>
+<body>
+<button class="theme" id="theme" type="button" aria-label="Toggle light or dark theme">◐ Theme</button>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">AWS cost guardrails · open source · Terraform</div>
+    <h1>Stop AWS bill surprises<br>in four weeks.</h1>
+    <p class="lead">Alerts before you overspend, spikes caught within a day, every dollar traced to a team, and dev/test servers switched off at night. Delivered as tested, open-source Terraform that your team owns.</p>
+    <div class="btns">
+      <a class="btn primary" href="#calculator">Estimate your savings</a>
+      <a class="btn ghost" href="https://github.com/sajedul5/aws-finops-guardrails">See the code on GitHub</a>
+    </div>
+    <div class="pills">
+      <span class="pill">Safe by default: nothing deleted or stopped unless you opt in</span>
+      <span class="pill">No stored AWS keys</span>
+      <span class="pill">Tested on every change</span>
+      <span class="pill">Typically &lt; $30/month to run</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap">
+    <h2>Sound familiar?</h2>
+    <p class="sub">The four ways AWS bills usually go wrong.</p>
+    <div class="grid">
+      <div class="card"><h3>📈 The bill is a surprise</h3><p>You find out you overspent when the invoice arrives, weeks too late to do anything about it.</p></div>
+      <div class="card"><h3>🔥 Something ran for weeks</h3><p>A test cluster or GPU instance was left on. Nobody noticed until month-end.</p></div>
+      <div class="card"><h3>❓ Nobody owns the spend</h3><p>Half the resources have no owner tag, so no team can see or cut its own costs.</p></div>
+      <div class="card"><h3>🌙 Paying for empty hours</h3><p>Dev and test servers run all night and all weekend, when nobody is using them.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>Six guardrails, one rollout</h2>
+    <p class="sub">Each is a small Terraform module. Use one or all of them.</p>
+    <div class="grid">
+      <div class="card"><span class="tag">See</span><h3>Budgets</h3><p>Alerts at 50%, 80% and 100% of your monthly budget, and when AWS forecasts you'll go over. Per-service budgets too.</p></div>
+      <div class="card"><span class="tag">See</span><h3>Cost anomaly detection</h3><p>AWS machine learning flags unusual spend in any service, so a runaway resource is caught within about a day.</p></div>
+      <div class="card"><span class="tag">Attribute</span><h3>Tag enforcement</h3><p>Finds untagged resources and, if you choose, standardises Owner / Environment / CostCenter tags across the organization.</p></div>
+      <div class="card"><span class="tag">Cut</span><h3>Off-hours scheduler</h3><p>Stops tagged dev/test EC2, RDS and Aurora at night and starts them in the morning. Dry-run first. Production is never touched.</p></div>
+      <div class="card"><span class="tag">Cut</span><h3>S3 lifecycle</h3><p>Moves ageing data to cheaper storage classes and cleans up old versions and failed uploads. Never deletes current data by default.</p></div>
+      <div class="card"><span class="tag">Automate</span><h3>Keyless CI/CD</h3><p>GitHub Actions deploys with short-lived credentials. Every change gets a plan on the pull request and an approval before it ships.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="calculator" style="padding-top:0">
+  <div class="wrap">
+    <h2>Estimate your savings</h2>
+    <p class="sub">Move the sliders to match your account. These are <b>typical estimates</b> based on the assumptions listed, not a guarantee.</p>
+    <div class="calc">
+      <div class="card">
+        <div class="field">
+          <label for="devtest">Dev/test EC2 + RDS spend <output id="devtest-o"></output></label>
+          <input id="devtest" type="range" min="0" max="50000" step="250" value="3000">
+          <small>Monthly cost of non-production servers and databases that could sleep at night.</small>
+        </div>
+        <div class="field">
+          <label for="hours">Hours needed per weekday <output id="hours-o"></output></label>
+          <input id="hours" type="range" min="6" max="18" step="1" value="12">
+          <small>For example 12 = 08:00–20:00, Monday to Friday. Off on weekends.</small>
+        </div>
+        <div class="field">
+          <label for="computeShare">Compute share of that spend <output id="computeShare-o"></output></label>
+          <input id="computeShare" type="range" min="50" max="100" step="5" value="85">
+          <small>Disks and database storage are still billed while stopped.</small>
+        </div>
+        <div class="field">
+          <label for="s3">S3 storage spend <output id="s3-o"></output></label>
+          <input id="s3" type="range" min="0" max="20000" step="100" value="1000">
+          <small>Monthly S3 Standard storage cost.</small>
+        </div>
+        <div class="field">
+          <label for="cold">Data older than 30 days and rarely read <output id="cold-o"></output></label>
+          <input id="cold" type="range" min="0" max="100" step="5" value="60">
+          <small>Logs, backups and old uploads are usually mostly cold.</small>
+        </div>
+      </div>
+
+      <div class="card result" aria-live="polite">
+        <div>
+          <div class="note">Estimated saving</div>
+          <div class="big" id="total-m">$0</div>
+          <div class="note">per month · <b id="total-y">$0</b> per year</div>
+        </div>
+        <div>
+          <div class="row"><span>Off-hours scheduler</span><b id="r-off">$0</b></div>
+          <div class="row"><span>S3 lifecycle (range)</span><b id="r-s3">$0</b></div>
+          <div class="row"><span>Cost to run the guardrails</span><b>≈ −$30</b></div>
+          <div class="row"><span>Runaway resource caught on day 1 (e.g. $200/day)</span><b>≈ $5,800 per incident</b></div>
+        </div>
+        <ul class="assume">
+          <li>Off-hours: running <span id="a-hours">60</span> of 168 hours a week means <span id="a-pct">64%</span> fewer compute hours.</li>
+          <li>S3: Standard-IA is ~45% cheaper than Standard and Glacier Instant Retrieval ~80% cheaper (us-east-1 list prices). The total uses the low end.</li>
+          <li>Anomaly incidents and savings from tagging/showback are <b>not</b> included in the total.</li>
+          <li>Actual results depend on your workload. We measure before and after in Cost Explorer.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>The four-week rollout</h2>
+    <p class="sub">Small, safe steps. You see value in the first week.</p>
+    <div class="weeks">
+      <div class="week"><b>Week 1</b><h3>See the money</h3><p>Budgets and anomaly alerts go live in Slack, Teams or email. Baseline taken from Cost Explorer.</p></div>
+      <div class="week"><b>Week 2</b><h3>Find the waste</h3><p>Review the top cost drivers with your team. Agree which dev/test resources can sleep at night.</p></div>
+      <div class="week"><b>Week 3</b><h3>Attribute every dollar</h3><p>Tag rules and cost allocation tags, so every team can see its own spend.</p></div>
+      <div class="week"><b>Week 4</b><h3>Cut and hand over</h3><p>Scheduler moves from dry-run to live, S3 tiering is enabled, CI/CD is set up, and your team gets a handover session.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>What you get</h2>
+    <p class="sub">Compared with doing it by hand, or not doing it.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Area</th><th>Without guardrails</th><th>With guardrails</th></tr></thead>
+        <tbody>
+          <tr><td><b>Overspend</b></td><td>Found on the invoice</td><td>Alerts at 50/80/100% and on forecast</td></tr>
+          <tr><td><b>Cost spikes</b></td><td>Found at month-end</td><td>Flagged within about a day</td></tr>
+          <tr><td><b>Ownership</b></td><td>"Who launched this?"</td><td>Owner, environment and cost center on every resource</td></tr>
+          <tr><td><b>Dev/test at night</b></td><td>Running 168 hours a week</td><td>Running only during working hours</td></tr>
+          <tr><td><b>Old S3 data</b></td><td>Full Standard price forever</td><td>Moved to cheaper classes automatically</td></tr>
+          <tr><td><b>Deploy security</b></td><td>Long-lived AWS keys in CI</td><td>Short-lived OIDC credentials, approval before deploy</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>Built to be trusted</h2>
+    <p class="sub">The code is public, so you can check every claim.</p>
+    <ul class="check">
+      <li><b>Tested on every change.</b> 33 Terraform tests, 12 Lambda tests, linting and a security scan, all required before merge.</li>
+      <li><b>Least privilege.</b> The scheduler can only stop resources that carry the opt-in tag, and AWS IAM enforces it.</li>
+      <li><b>Safe defaults.</b> Nothing is deleted, stopped or blocked unless you turn it on.</li>
+      <li><b>No lock-in.</b> MIT-licensed Terraform in your own repository. You keep everything.</li>
+      <li><b>Every security exception explained.</b> Each skipped scanner finding has a written cost or risk reason.</li>
+      <li><b>Supply-chain safe CI.</b> GitHub Actions pinned to exact versions and updated by Dependabot.</li>
+    </ul>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta">
+      <h2>Want this in your AWS account?</h2>
+      <p class="sub" style="margin:8px auto 0;max-width:560px">Tell me your monthly AWS spend and what worries you most about the bill. I'll reply with what I'd do first.</p>
+      <div class="btns" style="justify-content:center">
+        <a class="btn primary" href="https://github.com/sajedul5">Contact me on GitHub</a>
+        <a class="btn ghost" href="https://github.com/sajedul5/aws-finops-guardrails">Try it yourself (free)</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    aws-finops-guardrails · MIT license · Savings figures are typical estimates with stated assumptions, not client results.
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    var ids = ["devtest", "hours", "computeShare", "s3", "cold"];
+    var el = {};
+    ids.forEach(function (id) { el[id] = document.getElementById(id); });
+
+    function val(id) { return Number(el[id].value); }
+    function set(id, text) { document.getElementById(id).textContent = text; }
+
+    function update() {
+      var weeklyOn = val("hours") * 5;               // weekdays only
+      var offFraction = 1 - weeklyOn / 168;
+      var offhours = val("devtest") * (val("computeShare") / 100) * offFraction;
+
+      var coldSpend = val("s3") * (val("cold") / 100);
+      var s3Low = coldSpend * 0.45;                    // Standard -> Standard-IA
+      var s3High = coldSpend * 0.80;                   // Standard -> Glacier Instant Retrieval
+
+      var monthly = Math.max(0, offhours + s3Low - 30);
+
+      set("devtest-o", usd.format(val("devtest")) + "/mo");
+      set("hours-o", val("hours") + " h");
+      set("computeShare-o", val("computeShare") + "%");
+      set("s3-o", usd.format(val("s3")) + "/mo");
+      set("cold-o", val("cold") + "%");
+
+      set("r-off", usd.format(offhours));
+      set("r-s3", usd.format(s3Low) + " – " + usd.format(s3High));
+      set("total-m", usd.format(monthly));
+      set("total-y", usd.format(monthly * 12));
+      set("a-hours", weeklyOn);
+      set("a-pct", Math.round(offFraction * 100) + "%");
+    }
+
+    ids.forEach(function (id) { el[id].addEventListener("input", update); });
+    update();
+
+    var root = document.documentElement;
+    try {
+      var saved = localStorage.getItem("theme");
+      if (saved) root.setAttribute("data-theme", saved);
+    } catch (e) {}
+    document.getElementById("theme").addEventListener("click", function () {
+      var dark = root.getAttribute("data-theme")
+        ? root.getAttribute("data-theme") === "dark"
+        : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var next = dark ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

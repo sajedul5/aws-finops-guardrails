@@ -9,6 +9,8 @@
 
 Safe by default: nothing is deleted, stopped or blocked unless you opt in.
 
+**[Estimate your savings →](https://sajedul5.github.io/aws-finops-guardrails/)** (interactive calculator)
+
 ---
 
 ## The problem
@@ -115,7 +117,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and module rules, and [C
 I help teams roll these guardrails out in about **four weeks**: see the spend (weeks 1–2), attribute it to teams (week 3), and cut the waste (week 4). The rollout fits your accounts, tags and working hours, and your team gets a handover.
 
 - **Questions or ideas:** [open an issue](https://github.com/sajedul5/aws-finops-guardrails/issues)
-- **Work with me:** contact [@sajedul5](https://github.com/sajedul5) on GitHub
+- **Work with me:** contact [@sajedul5](https://github.com/sajedul5) on GitHub, or see the [overview and savings calculator](https://sajedul5.github.io/aws-finops-guardrails/)
 
 If this repo saves you money, a ⭐ helps others find it.
 
