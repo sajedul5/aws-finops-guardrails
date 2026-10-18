@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-18
+
+First public release: six guardrail modules, two examples, CI with five required checks, and a client pitch page.
+
 ### Added
 - Client pitch page (`docs/index.html`, served by GitHub Pages): problem, six guardrails, interactive savings calculator with stated assumptions, 4-week rollout, comparison table and contact. No external scripts; light and dark themes.
 - README: CI and version badges, problem/solution table, Mermaid architecture diagram, module table with running costs, quick start, estimated savings with stated assumptions, "Built to be trusted" section and contact section.
@@ -29,3 +33,6 @@ All notable changes to this project are documented here. The format follows
 ### Fixed
 - Guard hook no longer blocks commands that only *mention* deploy, merge or push commands inside heredoc text (for example docs and descriptions).
 - Minimum AWS provider raised from 5.40 to 5.80. Budget `tags` and the `python3.13` Lambda runtime don't exist before 5.80; checked by validating every module at exactly 5.80.0.
+
+[Unreleased]: https://github.com/sajedul5/aws-finops-guardrails/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/sajedul5/aws-finops-guardrails/releases/tag/v0.1.0
