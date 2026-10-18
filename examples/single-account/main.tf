@@ -4,12 +4,14 @@
 module "budgets" {
   source = "../../modules/budgets"
 
-  monthly_limit = var.monthly_budget_usd
-  alert_emails  = var.alert_emails
+  monthly_limit    = var.monthly_budget_usd
+  alert_emails     = var.alert_emails
+  alert_thresholds = var.budget_alert_percentages
 }
 
 module "cost_anomaly" {
   source = "../../modules/cost-anomaly"
+  count  = var.enable_cost_anomaly ? 1 : 0
 
   # Daily email digest: the simplest setup, no SNS subscription to confirm.
   frequency     = "DAILY"

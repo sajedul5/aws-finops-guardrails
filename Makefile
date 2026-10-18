@@ -1,13 +1,16 @@
 # Run `make help` to list targets.
 DIRS := $(sort $(dir $(wildcard modules/*/versions.tf examples/*/main.tf)))
-PYTHON  ?= python3
+# Uses the project virtualenv from `make setup` when it exists.
+PYTHON  ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 TFLINT  ?= tflint
 CHECKOV ?= checkov
 TF_TEST_DIRS := $(sort $(patsubst %/tests/,%/,$(dir $(wildcard modules/*/tests/*.tftest.hcl examples/*/tests/*.tftest.hcl))))
 
-.PHONY: help fmt fmt-check validate test tftest pytest lint security min-provider ci
+.PHONY: help setup demo fmt fmt-check validate test tftest pytest lint security min-provider ci
 
 help:
+	@echo "setup      Create .venv with the Python test and demo dependencies"
+	@echo "demo       Run the off-hours scheduler against a fake AWS account (no credentials needed)"
 	@echo "fmt        Format all Terraform files"
 	@echo "fmt-check  Fail if any Terraform file is not formatted"
 	@echo "validate   fmt-check + init/validate every module and example"
@@ -18,6 +21,14 @@ help:
 	@echo "security   checkov security scan"
 	@echo "min-provider  validate modules at their lowest supported AWS provider"
 	@echo "ci         everything CI runs"
+
+setup:
+	python3 -m venv .venv
+	.venv/bin/pip install --quiet -r tests/requirements.txt
+	@echo "Ready. Try: make demo"
+
+demo:
+	$(PYTHON) demo/offhours_demo.py
 
 fmt:
 	terraform fmt -recursive

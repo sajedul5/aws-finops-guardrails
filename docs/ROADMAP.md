@@ -13,3 +13,4 @@ Built one step at a time. ✅ = done, 🔄 = in progress.
 | ✅ 6 | README rewrite: badges, architecture diagram, quick start, estimated savings, contact | Readers become leads |
 | ✅ 7 | Client pitch page with savings calculator (GitHub Pages: `docs/index.html`) | One link to send prospects |
 | ✅ 8 | Release v0.1.0, GitHub topics, LinkedIn and dev.to posts | Visibility and inbound clients |
+| ✅ 9 | Easy to explore: `make setup` / `make demo` (no AWS), Getting started guide, simpler docs; `enable_cost_anomaly` fix found on a real account | Anyone can try it in 5 minutes |

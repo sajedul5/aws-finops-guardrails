@@ -58,17 +58,29 @@ flowchart LR
 
 ## Quick start
 
-The [`single-account`](examples/single-account) example adds budgets, anomaly alerts, the scheduler (in dry-run) and optional S3 tiering. It changes nothing that is already running.
+### Try it on your laptop: no AWS account needed
 
 ```bash
 git clone https://github.com/sajedul5/aws-finops-guardrails.git
-cd aws-finops-guardrails/examples/single-account
-cp terraform.tfvars.example terraform.tfvars   # set your budget, emails and timezone
-terraform init
-terraform plan                                  # review it, then apply
+cd aws-finops-guardrails
+make setup   # one time: installs the Python test libraries in .venv
+make demo    # the scheduler stops/starts servers in a FAKE AWS account
+make test    # every test, offline
 ```
 
-Or use a single module in your own code:
+### Deploy to your AWS account
+
+The [`single-account`](examples/single-account) example adds budgets, anomaly alerts, the scheduler (in dry-run) and optional S3 tiering. It changes nothing that is already running.
+
+```bash
+cd examples/single-account
+cp terraform.tfvars.example terraform.tfvars   # your budget, emails and timezone
+terraform init
+terraform plan                                  # preview; changes nothing
+terraform apply
+```
+
+Or use one module in your own code:
 
 ```hcl
 module "budgets" {
@@ -79,7 +91,7 @@ module "budgets" {
 }
 ```
 
-For AWS Organizations, tag policies and CI deploys, see the [`complete`](examples/complete) example.
+👉 **[Getting started guide](docs/GETTING_STARTED.md)**: step by step, from the laptop demo to GitHub Actions deploys, plus fixes for common errors. For AWS Organizations and tag policies, see the [`complete`](examples/complete) example.
 
 ## Estimated savings
 
@@ -98,7 +110,7 @@ There is no client data behind these numbers. They are **typical estimates** for
 
 ## Built to be trusted
 
-- **Tested on every pull request.** Five required checks: `terraform` (fmt, validate, 33 `terraform test` cases with a mock provider), `min-provider` (each module at AWS provider 5.80 exactly), `tflint`, `checkov` (Terraform and workflows), and `pytest` (12 tests for the scheduler Lambda, using moto).
+- **Tested on every pull request.** Five required checks: `terraform` (fmt, validate, 34 `terraform test` cases with a mock provider), `min-provider` (each module at AWS provider 5.80 exactly), `tflint`, `checkov` (Terraform and workflows), and `pytest` (12 tests for the scheduler Lambda, using moto).
 - **Least privilege.** The scheduler can only stop resources that carry the opt-in tag, and IAM enforces that, not just the code. The CI apply role has no permissions until you grant them.
 - **Every security exception is explained.** Each skipped checkov finding has a written reason, such as "a VPC would need a NAT gateway (~$32/month)" ([example](modules/offhours-scheduler/main.tf)).
 - **Supply-chain safe CI.** GitHub Actions are pinned to exact commit SHAs, so a moved tag can't change what runs.
@@ -107,7 +119,8 @@ There is no client data behind these numbers. They are **typical estimates** for
 ## Development
 
 ```bash
-make ci   # everything CI runs: validate, test, lint, security, min-provider
+make help  # list every command
+make ci    # everything CI runs: validate, test, lint, security, min-provider
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and module rules, and [CHANGELOG.md](CHANGELOG.md) for what changed.

@@ -15,6 +15,8 @@ Open-source Terraform modules that stop AWS bill surprises. This is a portfolio 
 modules/<name>/      one guardrail per module: main.tf, variables.tf, outputs.tf, versions.tf, README.md
 examples/<name>/     runnable compositions of modules (single-account, complete)
 tests/               pytest + moto for Lambda code
+demo/                make demo: the scheduler against a fake AWS account (moto)
+docs/                GETTING_STARTED.md (user guide), index.html (pitch page, GitHub Pages), ROADMAP.md
 scripts/             CI helpers (check-min-provider.sh)
 .github/workflows/   ci.yml: the five required checks on every PR
 .claude/             hooks (scripts in .claude/hooks/) and skills (/new-module, /validate, /step-done)
@@ -22,6 +24,8 @@ scripts/             CI helpers (check-min-provider.sh)
 
 ## Commands
 ```bash
+make setup         # one time: .venv with the Python test/demo libraries
+make demo          # scheduler demo, no AWS needed
 make fmt           # terraform fmt -recursive
 make validate      # fmt check + init -backend=false + validate for every module and example
 make test          # terraform test (mock provider) + pytest

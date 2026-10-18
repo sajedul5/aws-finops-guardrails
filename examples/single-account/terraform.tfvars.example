@@ -5,6 +5,8 @@ alert_emails       = ["finops@example.com"]
 timezone           = "Asia/Dhaka"
 
 # Optional
+# budget_alert_percentages = [50, 80, 100]   # % of monthly_budget_usd
 # anomaly_threshold_usd = 50
+# enable_cost_anomaly   = false   # if the account already has an anomaly monitor
 # scheduler_dry_run     = false   # after a week of checking the logs
 # lifecycle_bucket_ids  = ["my-app-logs"]

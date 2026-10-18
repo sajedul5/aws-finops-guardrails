@@ -19,6 +19,18 @@ variable "alert_emails" {
   type        = list(string)
 }
 
+variable "budget_alert_percentages" {
+  description = "Email when actual spend reaches these percentages of monthly_budget_usd. Example: budget 1600 with [62.5, 75, 100] alerts at $1,000, $1,200 and $1,600."
+  type        = list(number)
+  default     = [50, 80, 100]
+}
+
+variable "enable_cost_anomaly" {
+  description = "Create the all-services cost anomaly monitor. Set false if the account already has one (AWS creates \"Default-Services-Monitor\" in many accounts, and allows only one)."
+  type        = bool
+  default     = true
+}
+
 variable "anomaly_threshold_usd" {
   description = "Only alert on cost anomalies with at least this much impact."
   type        = number

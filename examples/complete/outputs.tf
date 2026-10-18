@@ -2,7 +2,7 @@ output "alert_topics" {
   description = "SNS topics to connect to Slack/Teams via AWS Chatbot."
   value = {
     budgets   = module.budgets.sns_topic_arn
-    anomalies = module.cost_anomaly.sns_topic_arn
+    anomalies = one(module.cost_anomaly[*].sns_topic_arn)
   }
 }
 

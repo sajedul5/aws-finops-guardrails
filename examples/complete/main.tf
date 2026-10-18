@@ -21,6 +21,7 @@ module "budgets" {
 # AWS allows only ONE all-services anomaly monitor per account, so there is exactly one here.
 module "cost_anomaly" {
   source = "../../modules/cost-anomaly"
+  count  = var.enable_cost_anomaly ? 1 : 0
 
   name_prefix   = var.name_prefix
   frequency     = "IMMEDIATE"
