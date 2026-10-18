@@ -11,14 +11,14 @@ Catches the "someone left a GPU cluster running" moment. AWS Cost Anomaly Detect
 ```hcl
 # Immediate alerts through SNS (connect it to Slack/Teams via AWS Chatbot)
 module "cost_anomaly" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/cost-anomaly?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/cost-anomaly?ref=v0.1.1"
 
   threshold_usd = 100
 }
 
 # Or a daily email digest
 module "cost_anomaly_email" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/cost-anomaly?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/cost-anomaly?ref=v0.1.1"
 
   frequency     = "DAILY"
   alert_emails  = ["finops@example.com"]

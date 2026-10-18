@@ -13,7 +13,7 @@ Makes every dollar traceable to an owner. You can't cut costs you can't attribut
 ```hcl
 # Member account: detect only
 module "tags" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/tag-enforcement?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/tag-enforcement?ref=v0.1.1"
 
   required_tags = {
     Owner       = []
@@ -24,7 +24,7 @@ module "tags" {
 
 # Management account: also publish an Organizations tag policy
 module "tag_policy" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/tag-enforcement?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/tag-enforcement?ref=v0.1.1"
 
   create_config_rule    = false
   create_tag_policy     = true

@@ -10,7 +10,7 @@ Stops month-end bill surprises. It emails you, or posts to SNS, when spend cross
 ## Usage
 ```hcl
 module "budgets" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/budgets?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/budgets?ref=v0.1.1"
 
   monthly_limit = 5000
   alert_emails  = ["finops@example.com"]

@@ -45,7 +45,7 @@ Wait for their go-ahead (see CLAUDE.md: one step at a time).
 ## Usage
 ```hcl
 module "<snake_name>" {
-  source = "github.com/<owner>/aws-finops-guardrails//modules/<name>?ref=v0.1.0"
+  source = "github.com/<owner>/aws-finops-guardrails//modules/<name>?ref=v0.1.1"
   # minimal required inputs
 }
 ```

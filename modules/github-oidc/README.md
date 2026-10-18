@@ -17,7 +17,7 @@ Security built in:
 ## Usage
 ```hcl
 module "github_oidc" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/github-oidc?ref=v0.1.0"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/github-oidc?ref=v0.1.1"
 
   github_repository = "sajedul5/aws-finops-guardrails"
   state_bucket_name = "my-terraform-state"
