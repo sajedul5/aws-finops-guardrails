@@ -30,7 +30,7 @@ make security      # checkov on Terraform and GitHub Actions
 make min-provider  # validate each module at its lowest supported AWS provider
 make ci            # all of the above, exactly what CI runs
 ```
-CI (`.github/workflows/ci.yml`) runs five jobs, and all are required before merging: `terraform`, `min-provider`, `tflint`, `checkov`, `pytest`. Actions are pinned to commit SHAs; Dependabot updates them.
+CI (`.github/workflows/ci.yml`) runs five jobs, and all are required before merging: `terraform`, `min-provider`, `tflint`, `checkov`, `pytest`. Actions are pinned to commit SHAs; update them by hand (new SHA + version comment) when needed.
 
 ## Security scan exceptions
 A checkov finding is either fixed or skipped inline with a reason (`#checkov:skip=CKV_X:why`). Never skip without a reason that a client would accept. The current skips are on the scheduler Lambda (see `modules/offhours-scheduler/main.tf`).

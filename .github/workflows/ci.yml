@@ -19,7 +19,7 @@ env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
   TF_IN_AUTOMATION: "true"
 
-# Actions are pinned to full commit SHAs (supply-chain safety); Dependabot keeps them current.
+# Actions are pinned to full commit SHAs (supply-chain safety). To update: new SHA + version comment.
 jobs:
   terraform:
     name: terraform

@@ -101,7 +101,7 @@ There is no client data behind these numbers. They are **typical estimates** for
 - **Tested on every pull request.** Five required checks: `terraform` (fmt, validate, 33 `terraform test` cases with a mock provider), `min-provider` (each module at AWS provider 5.80 exactly), `tflint`, `checkov` (Terraform and workflows), and `pytest` (12 tests for the scheduler Lambda, using moto).
 - **Least privilege.** The scheduler can only stop resources that carry the opt-in tag, and IAM enforces that, not just the code. The CI apply role has no permissions until you grant them.
 - **Every security exception is explained.** Each skipped checkov finding has a written reason, such as "a VPC would need a NAT gateway (~$32/month)" ([example](modules/offhours-scheduler/main.tf)).
-- **Supply-chain safe CI.** GitHub Actions are pinned to commit SHAs and kept current by Dependabot.
+- **Supply-chain safe CI.** GitHub Actions are pinned to exact commit SHAs, so a moved tag can't change what runs.
 - **Protected `main`.** Changes land only through reviewed pull requests with all checks green.
 
 ## Development
