@@ -1,6 +1,6 @@
 ---
 name: new-module
-description: Scaffold a new guardrail module in modules/<name>/ following this repo's conventions (versions, validated variables, safe defaults, outputs, README, CHANGELOG). Use when adding any new Terraform module to aws-finops-guardrails.
+description: Scaffold a new guardrail module in modules/<name>/ following this repo's conventions (versions, validated variables, safe defaults, outputs, README). Use when adding any new Terraform module to aws-finops-guardrails.
 ---
 
 # Add a new guardrail module
@@ -59,7 +59,6 @@ module "<snake_name>" {
 ~~~
 
 ## 4. Register it
-- Add a line under `## [Unreleased] / ### Added` in `CHANGELOG.md`.
 - Add a row to the module table in `README.md`, if the table exists.
 - Wire it into `examples/complete/main.tf`, if that example exists.
 

@@ -46,7 +46,7 @@ A checkov finding is either fixed or skipped inline with a reason (`#checkov:ski
 - **Safe defaults:** nothing deletes data, stops production, or blocks resource creation unless the user opts in (examples: `s3-lifecycle.expiration_days = null`, `tag-enforcement.create_tag_policy = false`).
 - SNS topics use `kms_master_key_id = "alias/aws/sns"`, and topic policies are scoped with `aws:SourceAccount`.
 - Optional resources use `count = var.create_x ? 1 : 0`. Outputs return `null` when the resource isn't created.
-- When a module changes, update its README and `CHANGELOG.md` under `[Unreleased]`.
+- When a module changes, update its README. There is no CHANGELOG file: changes are described in the PR and in the GitHub Release notes.
 
 ## Savings claims
 There's no real client data. Any savings number in docs or the pitch page must be labelled as a typical estimate, with its assumption stated (for example: "off-hours: 12h × 5 days running out of 168h/week ≈ 64% fewer hours").
