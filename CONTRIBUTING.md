@@ -32,7 +32,7 @@ gh pr create
 - Every variable has a `description`, a `type`, and a `validation` block where bad input is possible.
 - **Safe defaults:** nothing deletes data, stops production or blocks resource creation unless the user opts in.
 - No long-lived AWS keys anywhere. CI uses GitHub OIDC.
-- Add or update tests (`modules/<name>/tests/` or `tests/`), the module README and `CHANGELOG.md`.
+- Add or update tests (`modules/<name>/tests/` or `tests/`) and the module README.
 - Savings numbers are labelled as estimates, with the assumption stated.
 
 ## Commit messages

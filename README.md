@@ -123,7 +123,7 @@ make help  # list every command
 make ci    # everything CI runs: validate, test, lint, security, min-provider
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and module rules, and [CHANGELOG.md](CHANGELOG.md) for what changed.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and module rules, and [Releases](https://github.com/sajedul5/aws-finops-guardrails/releases) for what changed.
 
 ## Need help with your AWS bill?
 

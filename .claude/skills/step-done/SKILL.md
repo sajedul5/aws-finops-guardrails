@@ -9,7 +9,7 @@ Claude doesn't commit, push or merge. The user runs these commands.
 
 ## 1. Before printing anything
 - Run `/validate`. If anything fails, fix it first. Never hand over commands for a broken step.
-- Mark the step ✅ in `docs/ROADMAP.md` and add the changes to `CHANGELOG.md` under `[Unreleased]`.
+- Mark the step ✅ in `docs/ROADMAP.md`. (No CHANGELOG file; the PR body describes the changes.)
 - Run `git status --short` and `git branch --show-current`. List only the files that belong to **this** step; leave out placeholders for later steps.
 
 ## 2. Print this block, filled in
