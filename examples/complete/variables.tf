@@ -56,6 +56,12 @@ variable "required_tags" {
   }
 }
 
+variable "enable_cost_anomaly" {
+  description = "Create the all-services cost anomaly monitor. Set false if the account already has one (AWS creates \"Default-Services-Monitor\" in many accounts, and allows only one)."
+  type        = bool
+  default     = true
+}
+
 variable "enable_config_rule" {
   description = "Create the AWS Config required-tags rule. Needs an AWS Config recorder in this account/region."
   type        = bool

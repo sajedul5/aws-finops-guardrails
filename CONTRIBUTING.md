@@ -1,28 +1,42 @@
 # Contributing
 
-Thanks for helping make AWS bills less surprising.
+Thanks for helping make AWS bills less surprising. Issues, ideas and pull requests are all welcome.
 
-## Ground rules
-- Keep modules small and single-purpose. One guardrail per module.
-- Every input needs a `description`, a `type`, and a `validation` block where it makes sense.
-- Defaults must be **safe**: nothing should delete data or stop production by default.
-- No long-lived AWS credentials anywhere. CI uses GitHub OIDC.
+## Set up (5 minutes)
+You need [Terraform](https://developer.hashicorp.com/terraform/install) ≥ 1.10, Python ≥ 3.11, `make` and `git`. No AWS account is needed.
 
-## Local setup
 ```bash
-brew install terraform tflint terraform-docs pre-commit   # or your package manager
-pip install -r tests/requirements.txt
-pre-commit install
+git clone https://github.com/sajedul5/aws-finops-guardrails.git
+cd aws-finops-guardrails
+make setup   # Python test libraries in .venv
+make demo    # see the scheduler work against a fake AWS account
+make test    # all tests, offline
 ```
 
-## Before opening a PR
+Optional: `tflint` and `checkov` for `make lint` and `make security`. CI runs them anyway.
+
+## Make a change
 ```bash
-terraform fmt -recursive
-make ci            # everything CI runs: validate, test, lint, security, min-provider
+git switch -c feat/my-change
+# edit, then:
+make fmt
+make ci        # the same checks CI runs (lint/security are skipped if not installed)
+git commit -m "feat(budgets): add per-account budgets"
+git push -u origin feat/my-change
+gh pr create
 ```
+`main` is protected: every change goes through a pull request, and five checks must pass (`terraform`, `min-provider`, `tflint`, `checkov`, `pytest`).
+
+## Module rules
+- **One guardrail per module**, small and single-purpose.
+- Every variable has a `description`, a `type`, and a `validation` block where bad input is possible.
+- **Safe defaults:** nothing deletes data, stops production or blocks resource creation unless the user opts in.
+- No long-lived AWS keys anywhere. CI uses GitHub OIDC.
+- Add or update tests (`modules/<name>/tests/` or `tests/`), the module README and `CHANGELOG.md`.
+- Savings numbers are labelled as estimates, with the assumption stated.
 
 ## Commit messages
-Use [Conventional Commits](https://www.conventionalcommits.org/): `feat(budgets): add per-account budgets`.
+[Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `test:`, `ci:`, `chore:`.
 
-## Reporting a security issue
-Please do not open a public issue. Email the maintainer instead.
+## Security issues
+Please don't open a public issue. Use [GitHub private vulnerability reporting](https://github.com/sajedul5/aws-finops-guardrails/security/advisories/new) instead.

@@ -12,6 +12,7 @@ service_budgets_usd = {
 
 # Tagging (tag policy only from the management account)
 enable_config_rule = true
+# enable_cost_anomaly = false   # if the account already has an anomaly monitor
 # tag_policy_target_ids = ["r-abcd"]
 
 # S3

@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- `make setup` and `make demo`: run the real scheduler Lambda against a fake AWS account (moto). No AWS account needed.
+- `docs/GETTING_STARTED.md`: three levels (laptop demo, deploy from laptop, deploy from GitHub Actions with OIDC) and common errors.
+- `single-account` example: `budget_alert_percentages` to choose the alert levels.
+
+### Changed
+- README quick start and CONTRIBUTING simplified; CONTRIBUTING no longer mentions tools the repo doesn't use.
+
+### Fixed
+- Examples: `enable_cost_anomaly` switch. Accounts that already have AWS's `Default-Services-Monitor` failed on apply, because AWS allows only one all-services monitor per account.
+
 ## [0.1.0] - 2026-10-18
 
 First public release: six guardrail modules, two examples, CI with five required checks, and a client pitch page.

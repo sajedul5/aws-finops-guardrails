@@ -10,6 +10,11 @@ The quickest way to stop AWS bill surprises in **one account**. It takes about 1
 | S3 lifecycle (optional) | Moves old objects to cheaper storage in the buckets you list |
 
 ## Run it
+First check for an existing anomaly monitor. AWS allows one all-services monitor per account and creates `Default-Services-Monitor` in many accounts:
+```bash
+aws ce get-anomaly-monitors --query "AnomalyMonitors[].MonitorName"   # not [] ? set enable_cost_anomaly = false
+```
+
 ```bash
 cp terraform.tfvars.example terraform.tfvars   # edit owner, budget, emails, timezone
 terraform init

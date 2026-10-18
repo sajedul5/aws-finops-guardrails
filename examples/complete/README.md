@@ -17,6 +17,7 @@ terraform plan                                  # review, then apply it yourself
 ```
 
 ## Before you start
+- **Existing anomaly monitor:** AWS allows one all-services monitor per account and creates `Default-Services-Monitor` in many accounts. Check with `aws ce get-anomaly-monitors`; if one exists, set `enable_cost_anomaly = false`.
 - **AWS Config recorder:** the required-tags rule needs one. If the account has none, set `enable_config_rule = false`.
 - **Tag policy:** only from the Organizations **management** (or delegated admin) account. Set `tag_policy_target_ids` to your root or OU IDs.
 - **Remote state:** uncomment the `backend "s3"` block in `versions.tf`. It uses native S3 locking (Terraform ≥ 1.10), so no DynamoDB table is needed.

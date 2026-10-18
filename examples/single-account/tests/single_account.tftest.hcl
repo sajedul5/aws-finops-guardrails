@@ -39,3 +39,16 @@ run "with_lifecycle_buckets" {
     error_message = "Lifecycle rules should be planned for the listed bucket."
   }
 }
+
+run "skips_anomaly_monitor_when_account_has_one" {
+  command = plan
+
+  variables {
+    enable_cost_anomaly = false
+  }
+
+  assert {
+    condition     = length(module.cost_anomaly) == 0
+    error_message = "No anomaly monitor should be planned when enable_cost_anomaly = false."
+  }
+}
