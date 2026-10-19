@@ -14,14 +14,14 @@ For each bucket, an `aws_s3_bucket_lifecycle_configuration` with:
 ## Usage
 ```hcl
 module "s3_lifecycle" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/s3-lifecycle?ref=v0.1.1"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/s3-lifecycle?ref=v0.1.2"
 
   bucket_ids = ["my-app-logs", "my-backups"]
 }
 
 # Unpredictable access patterns: let S3 decide
 module "s3_intelligent" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/s3-lifecycle?ref=v0.1.1"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/s3-lifecycle?ref=v0.1.2"
 
   bucket_ids              = ["my-data-lake"]
   use_intelligent_tiering = true

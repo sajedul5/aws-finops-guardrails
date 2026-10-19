@@ -20,7 +20,7 @@ EventBridge Scheduler ──20:00 Mon–Fri──▶ Lambda {"action":"stop"}  �
 ## Usage
 ```hcl
 module "offhours" {
-  source = "github.com/sajedul5/aws-finops-guardrails//modules/offhours-scheduler?ref=v0.1.1"
+  source = "github.com/sajedul5/aws-finops-guardrails//modules/offhours-scheduler?ref=v0.1.2"
 
   timezone = "Asia/Dhaka"
   dry_run  = true # first week: watch the logs, then set to false
