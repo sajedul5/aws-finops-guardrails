@@ -5,7 +5,7 @@ Catches the "someone left a GPU cluster running" moment. AWS Cost Anomaly Detect
 ## What it creates
 - A Cost Anomaly Detection monitor. By default it watches **every AWS service**.
 - An alert subscription with a dollar-impact threshold
-- For `IMMEDIATE` alerts, an encrypted SNS topic that only Cost Anomaly Detection in this account can publish to
+- For `IMMEDIATE` alerts, an SNS topic that only Cost Anomaly Detection in this account can publish to (not KMS-encrypted: AWS services can't publish to a topic using the AWS-managed SNS key, and alerts hold no secrets)
 
 ## Usage
 ```hcl

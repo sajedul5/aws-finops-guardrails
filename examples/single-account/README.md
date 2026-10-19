@@ -22,7 +22,9 @@ terraform plan                                  # review, then apply it yourself
 ```
 
 ## After the first deploy
-1. **Confirm the emails.** AWS sends a confirmation email for anomaly alerts.
+1. **Confirm the emails.**
+   - `alert_emails`: AWS may send a "Verify email" message that must be clicked **while signed in to this AWS account**.
+   - `alert_emails_no_aws_login`: for people without AWS access (finance, HR, managers). They get a "Confirm subscription" email from SNS, and the link works without signing in.
 2. **Tag dev/test resources** that should sleep at night:
    ```bash
    aws ec2 create-tags --resources i-0123456789abcdef0 --tags Key=Schedule,Value=office-hours

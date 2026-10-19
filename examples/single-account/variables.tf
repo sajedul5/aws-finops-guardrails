@@ -19,6 +19,12 @@ variable "alert_emails" {
   type        = list(string)
 }
 
+variable "alert_emails_no_aws_login" {
+  description = "People without AWS access who should get budget alerts. Each gets a \"Confirm subscription\" email from SNS; the link works without signing in."
+  type        = list(string)
+  default     = []
+}
+
 variable "budget_alert_percentages" {
   description = "Email when actual spend reaches these percentages of monthly_budget_usd. Example: budget 1600 with [62.5, 75, 100] alerts at $1,000, $1,200 and $1,600."
   type        = list(number)

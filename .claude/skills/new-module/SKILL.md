@@ -28,7 +28,7 @@ Wait for their go-ahead (see CLAUDE.md: one step at a time).
 - **main.tf**:
   - no `provider` block
   - optional resources use `count = var.create_x ? 1 : 0`
-  - SNS topics: `kms_master_key_id = "alias/aws/sns"` and a topic policy scoped by `aws:SourceAccount`
+  - SNS topics that AWS services publish to: no `alias/aws/sns` encryption (those services can't use it; skip `CKV_AWS_26` with that reason) and a topic policy scoped by `aws:SourceAccount`
   - IAM: least privilege, built with `aws_iam_policy_document` and no `*` actions
 - **outputs.tf**: every output has a `description`; return `null` for resources that weren't created.
 - **README.md**: use the template below.

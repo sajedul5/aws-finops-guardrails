@@ -13,11 +13,11 @@ resource "aws_ce_anomaly_monitor" "this" {
 }
 
 resource "aws_sns_topic" "anomaly" {
+  #checkov:skip=CKV_AWS_26:Cost Anomaly Detection can't publish to a topic encrypted with the AWS-managed SNS key, and alerts hold only service names and amounts.
   count = local.use_sns ? 1 : 0
 
-  name              = "${var.name_prefix}-cost-anomalies"
-  kms_master_key_id = "alias/aws/sns"
-  tags              = var.tags
+  name = "${var.name_prefix}-cost-anomalies"
+  tags = var.tags
 }
 
 data "aws_iam_policy_document" "sns" {
