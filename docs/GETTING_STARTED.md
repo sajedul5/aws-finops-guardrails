@@ -139,13 +139,13 @@ provider "aws" {
 }
 
 module "budgets" {
-  source        = "github.com/sajedul5/aws-finops-guardrails//modules/budgets?ref=v0.1.1"
+  source        = "github.com/sajedul5/aws-finops-guardrails//modules/budgets?ref=v0.1.2"
   monthly_limit = 1000
   alert_emails  = ["you@example.com"]
 }
 
 module "github_oidc" {
-  source            = "github.com/sajedul5/aws-finops-guardrails//modules/github-oidc?ref=v0.1.1"
+  source            = "github.com/sajedul5/aws-finops-guardrails//modules/github-oidc?ref=v0.1.2"
   github_repository = "you/finops-live"   # only this repo can log in
   state_bucket_name = "YOUR-NAME-tfstate-ACCOUNT_ID"
   apply_policy_arns = []                  # add a policy with only what your Terraform needs
