@@ -5,7 +5,8 @@ Stops month-end bill surprises. It emails you, or posts to SNS, when spend cross
 ## What it creates
 - One total monthly cost budget for the account
 - Optional per-service budgets (EC2, RDS, and so on)
-- An SNS topic encrypted with the AWS-managed key. Its policy lets only AWS Budgets in this account publish.
+- An SNS topic that only AWS Budgets in this account can publish to. It isn't KMS-encrypted: AWS Budgets can't publish to a topic that uses the AWS-managed SNS key, and alerts hold only budget names and amounts.
+- Optional email subscriptions to that topic, for people without AWS access
 
 ## Usage
 ```hcl
@@ -14,6 +15,10 @@ module "budgets" {
 
   monthly_limit = 5000
   alert_emails  = ["finops@example.com"]
+
+  # People without an AWS login (finance, managers): SNS sends them a
+  # "Confirm subscription" link that works without signing in.
+  sns_email_subscribers = ["finance@example.com"]
 
   service_budgets = {
     "Amazon Elastic Compute Cloud - Compute" = 2000
@@ -26,6 +31,7 @@ module "budgets" {
 Visibility from day one. Overspend is caught **during** the month, not on the invoice. Forecast alerts usually warn 1–2 weeks before the limit is hit (typical estimate; it depends on how steady spend is).
 
 ## Notes
+- **Two ways to get emails.** `alert_emails` are sent directly by AWS Budgets; AWS may ask each address to verify while **signed in to the account** (through AWS User Notifications). `sns_email_subscribers` go through the SNS topic; each person clicks a "Confirm subscription" link, and **no AWS login is needed**.
 - AWS Budgets data refreshes about every 8–12 hours, so alerts aren't real-time. Pair this with `cost-anomaly` to catch sudden spikes.
 - This module creates monitoring-only budgets (no budget actions). AWS charges only for action-enabled budgets beyond the first two; check current [AWS Budgets pricing](https://aws.amazon.com/aws-cost-management/aws-budgets/pricing/).
 
@@ -34,7 +40,8 @@ Visibility from day one. Overspend is caught **during** the month, not on the in
 | Name | Description | Type | Default |
 |---|---|---|---|
 | monthly_limit | Total monthly account budget in USD | number | required |
-| alert_emails | Email subscribers | list(string) | `[]` |
+| alert_emails | Emails sent directly by AWS Budgets (max 10) | list(string) | `[]` |
+| sns_email_subscribers | Emails subscribed to the SNS topic; confirmation needs no AWS login | list(string) | `[]` |
 | alert_thresholds | Actual-spend alert percentages | list(number) | `[50, 80, 100]` |
 | forecast_threshold | Forecast alert percentage; `null` disables it | number | `100` |
 | service_budgets | Per-service budgets in USD, keyed by Cost Explorer service name | map(number) | `{}` |

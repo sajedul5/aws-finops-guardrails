@@ -7,6 +7,8 @@ module "budgets" {
   monthly_limit    = var.monthly_budget_usd
   alert_emails     = var.alert_emails
   alert_thresholds = var.budget_alert_percentages
+
+  sns_email_subscribers = var.alert_emails_no_aws_login
 }
 
 module "cost_anomaly" {

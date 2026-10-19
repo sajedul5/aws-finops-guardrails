@@ -2,6 +2,9 @@ mock_provider "aws" {
   mock_data "aws_caller_identity" {
     defaults = { account_id = "111122223333" }
   }
+  mock_data "aws_partition" {
+    defaults = { partition = "aws" }
+  }
   mock_data "aws_iam_policy_document" {
     defaults = { json = "{}" }
   }
@@ -80,4 +83,53 @@ run "invalid_limit_is_rejected" {
   }
 
   expect_failures = [var.monthly_limit]
+}
+
+run "sns_email_subscribers_need_no_aws_login" {
+  command = apply
+
+  variables {
+    sns_email_subscribers = ["finance@example.com", "hr@example.com"]
+  }
+
+  assert {
+    condition     = toset([for s in aws_sns_topic_subscription.email : s.endpoint]) == toset(["finance@example.com", "hr@example.com"])
+    error_message = "Each SNS email subscriber should get one email subscription."
+  }
+
+  assert {
+    condition     = alltrue([for s in aws_sns_topic_subscription.email : s.protocol == "email"])
+    error_message = "SNS subscriptions should use the email protocol."
+  }
+}
+
+run "topic_is_not_kms_encrypted" {
+  # AWS Budgets can't publish to a topic encrypted with the AWS-managed SNS key.
+  command = plan
+
+  assert {
+    condition     = aws_sns_topic.alerts[0].kms_master_key_id == null || aws_sns_topic.alerts[0].kms_master_key_id == ""
+    error_message = "The budget alert topic must not use alias/aws/sns, or Budgets can't deliver to it."
+  }
+}
+
+run "sns_email_subscribers_need_the_topic" {
+  command = plan
+
+  variables {
+    create_sns_topic      = false
+    sns_email_subscribers = ["finance@example.com"]
+  }
+
+  expect_failures = [aws_budgets_budget.monthly]
+}
+
+run "invalid_email_is_rejected" {
+  command = plan
+
+  variables {
+    alert_emails = ["shakil@the-data-island"]
+  }
+
+  expect_failures = [var.alert_emails]
 }

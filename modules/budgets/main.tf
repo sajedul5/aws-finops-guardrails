@@ -1,11 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_partition" "current" {}
+
 resource "aws_sns_topic" "alerts" {
+  #checkov:skip=CKV_AWS_26:AWS Budgets can't publish to a topic encrypted with the AWS-managed SNS key, and alerts hold only budget names and amounts.
   count = var.create_sns_topic ? 1 : 0
 
-  name              = "${var.name_prefix}-budget-alerts"
-  kms_master_key_id = "alias/aws/sns"
-  tags              = var.tags
+  name = "${var.name_prefix}-budget-alerts"
+  tags = var.tags
 }
 
 data "aws_iam_policy_document" "sns" {
@@ -26,6 +28,12 @@ data "aws_iam_policy_document" "sns" {
       variable = "aws:SourceAccount"
       values   = [data.aws_caller_identity.current.account_id]
     }
+
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:${data.aws_partition.current.partition}:budgets::${data.aws_caller_identity.current.account_id}:*"]
+    }
   }
 }
 
@@ -34,6 +42,15 @@ resource "aws_sns_topic_policy" "alerts" {
 
   arn    = aws_sns_topic.alerts[0].arn
   policy = data.aws_iam_policy_document.sns[0].json
+}
+
+# Each address gets a "Confirm subscription" email from SNS; the link works without an AWS login.
+resource "aws_sns_topic_subscription" "email" {
+  for_each = var.create_sns_topic ? toset(var.sns_email_subscribers) : toset([])
+
+  topic_arn = aws_sns_topic.alerts[0].arn
+  protocol  = "email"
+  endpoint  = each.value
 }
 
 locals {
@@ -72,6 +89,10 @@ resource "aws_budgets_budget" "monthly" {
     precondition {
       condition     = var.create_sns_topic || length(var.alert_emails) > 0
       error_message = "Budget alerts need a subscriber: set alert_emails or keep create_sns_topic = true."
+    }
+    precondition {
+      condition     = var.create_sns_topic || length(var.sns_email_subscribers) == 0
+      error_message = "sns_email_subscribers needs create_sns_topic = true."
     }
   }
 }

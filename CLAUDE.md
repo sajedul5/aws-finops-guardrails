@@ -44,7 +44,7 @@ A checkov finding is either fixed or skipped inline with a reason (`#checkov:ski
 - Every variable has a `description` and a `type`, plus a `validation` block when bad input is possible.
 - Every module takes `name_prefix` (default `"finops"`) and `tags` (default `{}`) where it creates taggable resources.
 - **Safe defaults:** nothing deletes data, stops production, or blocks resource creation unless the user opts in (examples: `s3-lifecycle.expiration_days = null`, `tag-enforcement.create_tag_policy = false`).
-- SNS topics use `kms_master_key_id = "alias/aws/sns"`, and topic policies are scoped with `aws:SourceAccount`.
+- SNS topics that AWS services publish to (Budgets, Cost Anomaly Detection) are **not** KMS-encrypted: those services can't use the AWS-managed `alias/aws/sns` key. Skip `CKV_AWS_26` inline with that reason. Topic policies are scoped with `aws:SourceAccount`.
 - Optional resources use `count = var.create_x ? 1 : 0`. Outputs return `null` when the resource isn't created.
 - When a module changes, update its README. There is no CHANGELOG file: changes are described in the PR and in the GitHub Release notes.
 

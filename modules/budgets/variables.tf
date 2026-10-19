@@ -43,9 +43,25 @@ variable "service_budgets" {
 }
 
 variable "alert_emails" {
-  description = "Email addresses that receive budget alerts directly from AWS Budgets."
+  description = "Email addresses that receive budget alerts directly from AWS Budgets. AWS may ask each address to verify while signed in to the account; use sns_email_subscribers for people without AWS access."
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = length(var.alert_emails) <= 10 && alltrue([for e in var.alert_emails : can(regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", e))])
+    error_message = "alert_emails must be valid email addresses, at most 10 (an AWS Budgets limit)."
+  }
+}
+
+variable "sns_email_subscribers" {
+  description = "Email addresses subscribed to the alert SNS topic. Each gets a confirmation link that works without an AWS login. Requires create_sns_topic = true."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for e in var.sns_email_subscribers : can(regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", e))])
+    error_message = "sns_email_subscribers must be valid email addresses."
+  }
 }
 
 variable "create_sns_topic" {
