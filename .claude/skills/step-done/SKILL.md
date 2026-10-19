@@ -1,6 +1,6 @@
 ---
 name: step-done
-description: Finish a roadmap step by giving the user copy-paste commands to commit, push, open a PR, merge and sync. Use at the end of EVERY completed step in docs/ROADMAP.md, or when the user asks for "command", "commit command" or "PR command".
+description: Finish a step by giving the user copy-paste commands to commit, push, open a PR, merge and sync. Use at the end of EVERY completed step, or when the user asks for "command", "commit command" or "PR command".
 ---
 
 # Step done: hand over the ship commands
@@ -9,7 +9,7 @@ Claude doesn't commit, push or merge. The user runs these commands.
 
 ## 1. Before printing anything
 - Run `/validate`. If anything fails, fix it first. Never hand over commands for a broken step.
-- Mark the step ✅ in `docs/ROADMAP.md`. (No CHANGELOG file; the PR body describes the changes.)
+- There is no ROADMAP or CHANGELOG file; the PR body describes the changes.
 - Run `git status --short` and `git branch --show-current`. List only the files that belong to **this** step; leave out placeholders for later steps.
 
 ## 2. Print this block, filled in

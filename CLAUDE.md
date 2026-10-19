@@ -3,7 +3,7 @@
 Open-source Terraform modules that stop AWS bill surprises. This is a portfolio project: it has to impress prospective clients and be easy for the community to reuse. Polish and clear docs matter more than extra features.
 
 ## How we work
-- **One step at a time.** The plan's steps are listed in `docs/ROADMAP.md`. Finish one step, show what changed and its benefit, then wait for the user's go-ahead.
+- **One step at a time.** Agree the next step with the user. Finish one step, show what changed and its benefit, then wait for the user's go-ahead.
 - **Every finished step ends with the ship commands.** Claude doesn't commit or push itself. It runs `/step-done`, which prints the exact `git add` (only that step's files), `git commit`, `git push`, `gh pr create` and post-merge sync commands for the user to run. One commit per step, on a feature branch, using Conventional Commits.
 - **Never push to `main`.** A GitHub ruleset (`protect-main`) blocks direct pushes, force-pushes and deletion for everyone, admins included, and a hook blocks it locally too. The flow is always:
   `git switch main && git pull` → `git switch -c <type>/<short-name>` → commit → `git push -u origin <branch>` → `gh pr create`.
@@ -16,7 +16,7 @@ modules/<name>/      one guardrail per module: main.tf, variables.tf, outputs.tf
 examples/<name>/     runnable compositions of modules (single-account, complete)
 tests/               pytest + moto for Lambda code
 demo/                make demo: the scheduler against a fake AWS account (moto)
-docs/                GETTING_STARTED.md (user guide), index.html (pitch page, GitHub Pages), ROADMAP.md
+docs/                GETTING_STARTED.md (user guide), index.html (pitch page, GitHub Pages)
 scripts/             CI helpers (check-min-provider.sh)
 .github/workflows/   ci.yml: the five required checks on every PR
 .claude/             hooks (scripts in .claude/hooks/) and skills (/new-module, /validate, /step-done)
