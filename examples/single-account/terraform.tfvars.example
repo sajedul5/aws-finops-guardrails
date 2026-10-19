@@ -1,11 +1,10 @@
 # Copy to terraform.tfvars and edit. terraform.tfvars is git-ignored.
 owner              = "platform-team"
 monthly_budget_usd = 2000
-alert_emails       = ["finops@example.com"]
+alert_emails       = ["finops@example.com"]   # each clicks "Confirm subscription"; no AWS login needed
 timezone           = "Asia/Dhaka"
 
 # Optional
-# alert_emails_no_aws_login = ["finance@example.com"]   # people without AWS access
 # budget_alert_percentages = [50, 80, 100]   # % of monthly_budget_usd
 # anomaly_threshold_usd = 50
 # enable_cost_anomaly   = false   # if the account already has an anomaly monitor

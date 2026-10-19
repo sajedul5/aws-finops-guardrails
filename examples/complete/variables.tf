@@ -34,7 +34,7 @@ variable "service_budgets_usd" {
 }
 
 variable "alert_emails" {
-  description = "Who receives budget alert emails."
+  description = "Who receives budget and anomaly emails. Each person gets a \"Confirm subscription\" email from SNS; the link works without an AWS login."
   type        = list(string)
 }
 

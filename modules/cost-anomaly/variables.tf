@@ -44,9 +44,25 @@ variable "frequency" {
 }
 
 variable "alert_emails" {
-  description = "Email subscribers. Only used when frequency is DAILY or WEEKLY (an AWS restriction)."
+  description = "Email subscribers sent directly by Cost Anomaly Detection. Only used when frequency is DAILY or WEEKLY (an AWS restriction)."
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = alltrue([for e in var.alert_emails : can(regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", e))])
+    error_message = "alert_emails must be valid email addresses."
+  }
+}
+
+variable "sns_email_subscribers" {
+  description = "Email addresses subscribed to the IMMEDIATE alert SNS topic. Each gets a confirmation link that works without an AWS login. Requires frequency = IMMEDIATE."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for e in var.sns_email_subscribers : can(regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", e))])
+    error_message = "sns_email_subscribers must be valid email addresses."
+  }
 }
 
 variable "tags" {
