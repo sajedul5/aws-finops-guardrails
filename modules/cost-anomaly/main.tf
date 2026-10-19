@@ -48,6 +48,15 @@ resource "aws_sns_topic_policy" "anomaly" {
   policy = data.aws_iam_policy_document.sns[0].json
 }
 
+# Each address gets a "Confirm subscription" email from SNS; the link works without an AWS login.
+resource "aws_sns_topic_subscription" "email" {
+  for_each = local.use_sns ? toset(var.sns_email_subscribers) : toset([])
+
+  topic_arn = aws_sns_topic.anomaly[0].arn
+  protocol  = "email"
+  endpoint  = each.value
+}
+
 resource "aws_ce_anomaly_subscription" "this" {
   name             = "${var.name_prefix}-anomaly-alerts"
   frequency        = var.frequency
@@ -84,6 +93,10 @@ resource "aws_ce_anomaly_subscription" "this" {
     precondition {
       condition     = local.use_sns || length(var.alert_emails) > 0
       error_message = "DAILY or WEEKLY frequency needs at least one address in alert_emails."
+    }
+    precondition {
+      condition     = local.use_sns || length(var.sns_email_subscribers) == 0
+      error_message = "sns_email_subscribers needs frequency = IMMEDIATE; use alert_emails for DAILY or WEEKLY."
     }
   }
 }

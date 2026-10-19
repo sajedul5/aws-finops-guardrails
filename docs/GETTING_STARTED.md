@@ -20,7 +20,7 @@ cd aws-finops-guardrails
 
 make setup   # creates .venv with the test libraries (one time)
 make demo    # the scheduler stops and starts servers in a FAKE AWS account
-make test    # 38 Terraform tests and 12 Lambda tests, all offline
+make test    # 41 Terraform tests and 12 Lambda tests, all offline
 ```
 
 `make demo` shows the scheduler's safety rules in action:
@@ -69,13 +69,12 @@ cp terraform.tfvars.example terraform.tfvars
 ```
 Edit `terraform.tfvars`:
 ```hcl
-owner                     = "your-name"
-monthly_budget_usd        = 1000
-budget_alert_percentages  = [50, 80, 100]            # emails at $500, $800, $1,000
-alert_emails              = ["you@example.com"]
-alert_emails_no_aws_login = ["finance@example.com"]  # optional: people without AWS access
-timezone                  = "Asia/Dhaka"
-enable_cost_anomaly       = true                     # false if step 2 found a monitor
+owner                    = "your-name"
+monthly_budget_usd       = 1000
+budget_alert_percentages = [50, 80, 100]   # emails at $500, $800, $1,000
+alert_emails             = ["you@example.com", "finance@example.com"]
+timezone                 = "Asia/Dhaka"
+enable_cost_anomaly      = true            # false if step 2 found a monitor
 ```
 
 ### Step 4: Preview, then create
@@ -86,7 +85,7 @@ terraform apply    # type "yes"
 ```
 
 ### Step 5: Check it works
-1. **Email:** click the AWS "Verify email" message while signed in to the account. People in `alert_emails_no_aws_login` click "Confirm subscription" instead, with no login needed.
+1. **Email:** everyone in `alert_emails` clicks **Confirm subscription** in the "AWS Notification - Subscription Confirmation" emails. No AWS login is needed.
 2. **AWS Console:** open **Budgets** to see `finops-monthly-total`, and **Lambda** to see `finops-offhours-scheduler`.
 3. **Scheduler test** (dry run, changes nothing):
    ```bash
@@ -197,6 +196,6 @@ From now on: change `main.tf` → open a PR → read the plan comment → merge 
 | Anomaly monitor `Limit exceeded` on apply | Set `enable_cost_anomaly = false` |
 | `EntityAlreadyExists` for the GitHub OIDC provider | Set `create_oidc_provider = false` and `oidc_provider_arn` |
 | Config rule fails: no configuration recorder | `complete` example: set `enable_config_rule = false`, or turn on AWS Config first |
-| "Verify email" needs an AWS login the person doesn't have | Move them to `alert_emails_no_aws_login` |
+| Someone gets no alerts | They haven't clicked **Confirm subscription** yet. Resend: SNS console → Subscriptions → select → Request confirmation |
 | No budget emails | Budgets data refreshes every 8–12 hours; alerts aren't instant |
 | `make test` fails with `No module named pytest` | Run `make setup` first |

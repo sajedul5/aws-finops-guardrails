@@ -24,7 +24,7 @@ terraform plan                                  # review, then apply it yourself
 - **GitHub OIDC:** an account can have only one GitHub OIDC provider. If one exists, set `github_create_oidc_provider = false` and `github_oidc_provider_arn`.
 
 ## After the first deploy
-1. Connect the `alert_topics` outputs to Slack or Teams with AWS Chatbot, or subscribe an email address.
+1. Everyone in `alert_emails` clicks **Confirm subscription** in the AWS emails (no AWS login needed). Optional: connect the `alert_topics` outputs to Slack or Teams with AWS Chatbot.
 2. Activate `Owner`, `Environment` and `CostCenter` as **cost allocation tags** in the Billing console.
 3. Tag dev/test resources with `Schedule=office-hours`, check a week of dry-run logs, then set `scheduler_dry_run = false`.
 4. If you use CI: copy [`deploy-workflow.yml`](deploy-workflow.yml) to `.github/workflows/deploy.yml`. Set the `github_roles` outputs as repository variables `AWS_PLAN_ROLE_ARN` and `AWS_APPLY_ROLE_ARN` (plus `AWS_REGION`), and add required reviewers to the `production` environment. PRs then get a plan comment, and merges apply the exact reviewed plan after approval.

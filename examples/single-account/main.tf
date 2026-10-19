@@ -5,20 +5,20 @@ module "budgets" {
   source = "../../modules/budgets"
 
   monthly_limit    = var.monthly_budget_usd
-  alert_emails     = var.alert_emails
   alert_thresholds = var.budget_alert_percentages
 
-  sns_email_subscribers = var.alert_emails_no_aws_login
+  # Emails go through SNS: each person clicks "Confirm subscription", no AWS login needed.
+  sns_email_subscribers = var.alert_emails
 }
 
 module "cost_anomaly" {
   source = "../../modules/cost-anomaly"
   count  = var.enable_cost_anomaly ? 1 : 0
 
-  # Daily email digest: the simplest setup, no SNS subscription to confirm.
-  frequency     = "DAILY"
-  alert_emails  = var.alert_emails
-  threshold_usd = var.anomaly_threshold_usd
+  # Immediate alerts through SNS, to the same emails (no AWS login needed to confirm).
+  frequency             = "IMMEDIATE"
+  sns_email_subscribers = var.alert_emails
+  threshold_usd         = var.anomaly_threshold_usd
 }
 
 module "offhours" {

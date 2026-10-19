@@ -13,20 +13,23 @@ module "budgets" {
   name_prefix     = var.name_prefix
   monthly_limit   = var.monthly_budget_usd
   service_budgets = var.service_budgets_usd
-  alert_emails    = var.alert_emails
   tags            = local.tags
+
+  # Each person clicks "Confirm subscription" from SNS; no AWS login needed.
+  sns_email_subscribers = var.alert_emails
 }
 
-# Spikes go to SNS immediately: connect AWS Chatbot to Slack/Teams, or subscribe an email.
+# Spikes go to SNS immediately: emailed to alert_emails, and AWS Chatbot can add Slack/Teams.
 # AWS allows only ONE all-services anomaly monitor per account, so there is exactly one here.
 module "cost_anomaly" {
   source = "../../modules/cost-anomaly"
   count  = var.enable_cost_anomaly ? 1 : 0
 
-  name_prefix   = var.name_prefix
-  frequency     = "IMMEDIATE"
-  threshold_usd = var.anomaly_threshold_usd
-  tags          = local.tags
+  name_prefix           = var.name_prefix
+  frequency             = "IMMEDIATE"
+  threshold_usd         = var.anomaly_threshold_usd
+  sns_email_subscribers = var.alert_emails
+  tags                  = local.tags
 }
 
 # Week 3: attribute every dollar ------------------------------------------------

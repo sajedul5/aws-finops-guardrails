@@ -5,7 +5,7 @@ The quickest way to stop AWS bill surprises in **one account**. It takes about 1
 | Guardrail | What you get |
 |---|---|
 | Budgets | Email at 50%, 80% and 100% of your monthly budget, and when AWS forecasts you'll go over |
-| Cost anomaly detection | Daily email when spend jumps unexpectedly by more than the threshold |
+| Cost anomaly detection | Email as soon as spend jumps unexpectedly by more than the threshold |
 | Off-hours scheduler | Stops tagged dev/test EC2 and RDS at 20:00 and starts them at 08:00, Mon–Fri. **Dry-run first.** |
 | S3 lifecycle (optional) | Moves old objects to cheaper storage in the buckets you list |
 
@@ -22,9 +22,7 @@ terraform plan                                  # review, then apply it yourself
 ```
 
 ## After the first deploy
-1. **Confirm the emails.**
-   - `alert_emails`: AWS may send a "Verify email" message that must be clicked **while signed in to this AWS account**.
-   - `alert_emails_no_aws_login`: for people without AWS access (finance, HR, managers). They get a "Confirm subscription" email from SNS, and the link works without signing in.
+1. **Confirm the emails.** Everyone in `alert_emails` gets "AWS Notification - Subscription Confirmation" emails (one for budgets, one for anomalies). They click **Confirm subscription**; no AWS login is needed. Until they click, they get no alerts.
 2. **Tag dev/test resources** that should sleep at night:
    ```bash
    aws ec2 create-tags --resources i-0123456789abcdef0 --tags Key=Schedule,Value=office-hours
